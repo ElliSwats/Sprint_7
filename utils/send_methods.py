@@ -2,7 +2,11 @@ import allure
 import requests
 from faker import Faker
 
-from utils.data import BASE_URL
+from utils.data import (
+    BASE_URL,
+    ENDPOINT_COURIER,
+    ENDPOINT_LOGIN,
+    ENDPOINT_ORDER)
 
 
 fake = Faker(locale="ru_RU")
@@ -19,7 +23,7 @@ class Methods:
             body['password'] = password
         if first_name is not None:
             body['first_name'] = first_name
-        response = requests.post(url=BASE_URL + '/api/v1/courier', data=body)
+        response = requests.post(url=BASE_URL + ENDPOINT_COURIER, data=body)
 
         return response
 
@@ -27,7 +31,7 @@ class Methods:
     @allure.step("Отправляем post запрос на эндпойнт /api/v1/courier/login")
     def login_courier(login, password):
         body = {"login": login, "password": password}
-        response = requests.post(url=BASE_URL + '/api/v1/courier/login', data=body)
+        response = requests.post(url=BASE_URL + ENDPOINT_LOGIN, data=body)
 
         try:
             courier_id = response.json()['id']
@@ -48,7 +52,7 @@ class Methods:
                 "deliveryDate": fake.date_between(start_date='today', end_date='+10d').isoformat(),
                 "comment": fake.words(nb=1, unique=True),
                 "color": list_colors}
-        response = requests.post(url=BASE_URL + '/api/v1/orders', data=body)
+        response = requests.post(url=BASE_URL + ENDPOINT_ORDER, data=body)
 
         try:
             track_id = response.json()['track']
@@ -60,7 +64,7 @@ class Methods:
     @staticmethod
     @allure.step("Отправляем get запрос на эндпойнт /api/v1/orders")
     def get_orders():
-        response = requests.get(url=BASE_URL + '/api/v1/orders')
+        response = requests.get(url=BASE_URL + ENDPOINT_ORDER)
 
         return response
 
@@ -68,6 +72,6 @@ class Methods:
     @allure.step("Отправляем delete запрос на эндпойнт /api/v1/courier/")
     def delete_courier(courier_id):
         body = {"id": courier_id}
-        response = requests.delete(url=BASE_URL + '/api/v1/courier/' + str(courier_id), data=body)
+        response = requests.delete(url=BASE_URL + ENDPOINT_COURIER + str(courier_id), data=body)
 
         return response

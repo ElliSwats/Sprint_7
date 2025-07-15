@@ -8,20 +8,12 @@ class TestLoginCourier:
                   'Эндпойнт /api/v1/courier/login')
     def test_answers_and_login_created_courier_success(self, reg_and_auth):
         user_data = reg_and_auth
-        with allure.step("Авторизация"):
-            response, _ = Methods.login_courier(
+        with allure.step("Авторизация и получение courier id"):
+            response, courier_id = Methods.login_courier(
                 login=user_data[0],
                 password=user_data[1])
         with allure.step("Проверка статус-кода ответа"):
             assert response.status_code == 200
-
-    @allure.title('Проверка возврата ID при успешной авторизации. Эндпойнт /api/v1/courier/login')
-    def test_answers_and_login_created_courier_success(self, reg_and_auth):
-        user_data = reg_and_auth
-        with allure.step("Авторизация и получение courier id"):
-            _, courier_id = Methods.login_courier(
-                login=user_data[0],
-                password=user_data[1])
         with allure.step("Проверка, что courier id не пустой"):
             assert courier_id is not None and courier_id != ""
 
